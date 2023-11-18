@@ -9,11 +9,12 @@ import os
 from graph import HydroGraph
 
 def create_gui():
+    # Create a HydroGraph class to use all of its functions
     graph_backend = HydroGraph()
 
     # Create the main window
     root = tk.Tk()
-    root.title("River Flow Predictions")
+    root.title("FlowForecast")
     root.iconbitmap("data/eef-g.ico")
 
     # Create a Figure and a Canvas to draw the graph
@@ -34,8 +35,12 @@ def create_gui():
     # Add a date selector
     date_selector = DateEntry(root)
     date_selector.pack()
-
+          
+    # Add a button
     def collect_info():
+        if not os.path.exists("data/parquets"):
+            os.makedirs("data/parquets")
+        
         selcted_date = date_selector.get_date().strftime("%Y-%m-%d")
         # selected_date = selected_date.strftime("%Y-%m-%d")
         selected_sensor = textbox.get()
@@ -50,6 +55,11 @@ def create_gui():
         canvas.figure = fig
         canvas.draw()
 
+
+    button = ttk.Button(root, text="Get Data", command=collect_info)
+    button.pack()
+
+    # Add a second button that clears the cached data 
     def clear_cache():
         cache_folder = "data"
         parquet_subfolder = f"{cache_folder}/parquets"
@@ -57,14 +67,10 @@ def create_gui():
         for file in os.listdir(parquet_subfolder):
             file_path = os.path.join(parquet_subfolder, file)
             os.remove(file_path)
-           
-    # Add a button
-    button = ttk.Button(root, text="Get Data", command=collect_info)
-    button.pack()
+ 
 
-    # Add a second button that clears the cached data
     cache_button = ttk.Button(root, text="Clear Cache", command=clear_cache)
     cache_button.pack()
 
-    # Start the main loop
+    # Start the application loop
     tk.mainloop()
